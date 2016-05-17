@@ -1,0 +1,6 @@
+docs/_build/**
+.coverage
+.tox
+htmlcov
+*.py[co]
+
