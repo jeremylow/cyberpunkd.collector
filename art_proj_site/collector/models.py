@@ -15,10 +15,12 @@ class Location(models.Model):
     loc_name = models.CharField(max_length=255)
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
+    hashtag = models.CharField(max_length=140, blank=True)
 
     def __str__(self):
-        return "Location(name={0!r}, latitude={1}, longitude={2})".format(
+        return "Location(name={0!r}, hashtag={1!r}, latitude={2}, longitude={3})".format(
             self.loc_name,
+            self.hashtag,
             self.latitude,
             self.longitude)
 
