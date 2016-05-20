@@ -29,7 +29,7 @@ class Tweet(models.Model):
     tweet_user = models.ForeignKey(TwitterUser)
     tweet_text = models.TextField()
     tweet_date = models.DateField()
-    tweet_loc = models.OneToOneField(Location, null=True)
+    tweet_loc = models.ForeignKey(Location, null=True)
 
     def __str__(self):
         return "Tweet(tweet_user={0!r}, tweet_text={1!r}, tweet_date={2}, tweet_loc={3!r})".format(

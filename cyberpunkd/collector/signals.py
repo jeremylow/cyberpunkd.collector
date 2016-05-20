@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import division, print_function
 
 import asyncio
@@ -51,33 +52,29 @@ def insert_to_db(data):
     status = twitter.Status.NewFromJsonDict(data)
     location = None
 
-    print('got candidate tweet')
-
     for hashtag in status.hashtags:
         ht = "#{0}".format(hashtag.text.lower())
-        print(ht)
+
         try:
             location = Location.objects.get(hashtag__iexact=ht)
         except Exception as e:
-            print(e)
+            post_slack(e.__repr__())
 
     if location is None:
-        print('passed without loc.')
         return False
 
-    print('inserting to db')
-    try:
-        user = TwitterUser(username=status.user.screen_name,
-                           face_hash=None,
-                           image=None)
-        user.save()
-        tweet = Tweet(tweet_user=user,
-                      tweet_text=status.text,
-                      tweet_date=datetime.datetime.fromtimestamp(status.created_at_in_seconds),
-                      tweet_loc=location)
-        tweet.save()
-    except Exception as e:
-        post_slack(e.__repr__())
+    #try:
+    user = TwitterUser(username=status.user.screen_name,
+                       face_hash=None,
+                       image=None)
+    user.save()
+    tweet = Tweet(tweet_user=user,
+                  tweet_text=status.text,
+                  tweet_date=datetime.datetime.fromtimestamp(status.created_at_in_seconds),
+                  tweet_loc=location)
+    tweet.save()
+    #except Exception as e:
+        #post_slack(e.__repr__())
 
 
 def scrape_tweets():
