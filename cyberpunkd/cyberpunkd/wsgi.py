@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 """
-WSGI config for art_proj_site project.
+WSGI config for cyberpunkd project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -12,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "art_proj_site.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cyberpunkd.settings")
 
 application = get_wsgi_application()

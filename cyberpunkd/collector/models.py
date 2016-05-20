@@ -4,7 +4,7 @@ from django.db import models
 
 class TwitterUser(models.Model):
     username = models.CharField(max_length=16)
-    face_hash = models.TextField(blank=True)
+    face_hash = models.TextField(blank=True, null=True)
     image = models.ImageField(null=True)
 
     def __str__(self):
