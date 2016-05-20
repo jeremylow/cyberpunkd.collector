@@ -4,3 +4,5 @@ docs/_build/**
 htmlcov
 *.py[co]
 env.py
+
+cyberpunkd/docker.postgres.sh
