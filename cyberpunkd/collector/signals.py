@@ -16,18 +16,19 @@ from django.dispatch import receiver
 import requests
 import twitter
 
+import env
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 sys.path.append(os.path.dirname(BASE_DIR))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cyberpunkd.settings")
 django.setup()
 
-from collector.models import (
+from collector.models import (  # NOQA
     TwitterUser,
     Tweet,
     Location)
 
-import env
 
 with open(os.path.join(BASE_DIR, 'scraper.pid'), 'w') as pidfile:
     pidfile.write(str(os.getpid()))
@@ -63,18 +64,18 @@ def insert_to_db(data):
     if location is None:
         return False
 
-    #try:
-    user = TwitterUser(username=status.user.screen_name,
-                       face_hash=None,
-                       image=None)
-    user.save()
-    tweet = Tweet(tweet_user=user,
-                  tweet_text=status.text,
-                  tweet_date=datetime.datetime.fromtimestamp(status.created_at_in_seconds),
-                  tweet_loc=location)
-    tweet.save()
-    #except Exception as e:
-        #post_slack(e.__repr__())
+    try:
+        user = TwitterUser(username=status.user.screen_name,
+                           face_hash=None,
+                           image=None)
+        user.save()
+        tweet = Tweet(tweet_user=user,
+                      tweet_text=status.text,
+                      tweet_date=datetime.datetime.fromtimestamp(status.created_at_in_seconds),
+                      tweet_loc=location)
+        tweet.save()
+    except Exception as e:
+        post_slack(e.__repr__())
 
 
 def scrape_tweets():
@@ -85,7 +86,7 @@ def scrape_tweets():
     for line in api.GetStreamFilter(track=hashtags):
         try:
             if 'in_reply_to_status_id' in line:
-                task = event_loop.call_soon(insert_to_db(line))
+                event_loop.call_soon(insert_to_db(line))
         except twitter.TwitterError as e:
             post_slack(e.__repr__())
     try:
