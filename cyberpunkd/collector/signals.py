@@ -20,7 +20,7 @@ import signal
 import sys
 
 import django
-from django.db.models.signals import post_save
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -37,6 +37,7 @@ from collector.models import (  # NOQA
 __author__ = "Jeremy Low <jeremylow@gmail.com>"
 
 
+@receiver(post_delete, sender=Location)
 @receiver(post_save, sender=Location)
 def sig_handler(sender, **kwargs):
     with open('{0}/scraper.pid'.format(BASE_DIR), 'r') as f:

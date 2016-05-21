@@ -22,8 +22,11 @@ import shlex
 import signal
 import subprocess
 import sys
+from tempfile import NamedTemporaryFile
 
 import django
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.files import File
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 import requests
@@ -40,6 +43,7 @@ django.setup()
 from collector.models import (  # NOQA
     TwitterUser,
     Tweet,
+    TweetImage,
     Location)
 
 __author__ = "Jeremy Low <jeremylow@gmail.com>"
@@ -60,9 +64,18 @@ def _get_api():
                        env.ACCESS_SECRET)
 
 
+def http_to_file(url):
+    _, ext = os.path.splitext(os.path.basename(url))
+    data_file = NamedTemporaryFile(suffix=ext)
+    req = requests.get(url, stream=True)
+    data_file.write(req.raw.data)
+    return data_file
+
+
 def insert_to_db(data):
     status = twitter.Status.NewFromJsonDict(data)
     location = None
+    images = []
 
     for hashtag in status.hashtags:
         ht = "#{0}".format(hashtag.text.lower())
@@ -72,21 +85,43 @@ def insert_to_db(data):
         except Exception as e:
             post_slack(e.__repr__())
 
+    if status.media:
+        for image in status.media:
+            images.append(image.media_url_https)
+    else:
+        return False
+
     if location is None:
         return False
 
     try:
-        user = TwitterUser(username=status.user.screen_name,
-                           face_hash=None,
-                           image=None)
-        user.save()
-        tweet = Tweet(tweet_user=user,
-                      tweet_text=status.text,
-                      tweet_date=datetime.datetime.fromtimestamp(status.created_at_in_seconds),
-                      tweet_loc=location)
+        try:
+            user = TwitterUser.objects.get(twitter_id=status.user.id)
+        except ObjectDoesNotExist:
+            user = TwitterUser(
+                username=status.user.screen_name,
+                twitter_id=status.user.id)
+            user.save()
+
+        tweet = Tweet(
+            tweet_user=user,
+            tweet_text=status.text,
+            tweet_date=datetime.datetime.fromtimestamp(status.created_at_in_seconds),
+            tweet_loc=location)
         tweet.save()
+
+        if tweet and user and location:
+            for image in images:
+                temporary_file = http_to_file(image)
+
+                tweet_image = TweetImage()
+                tweet_image.tweet_user = user
+                tweet_image.tweet = tweet
+                tweet_image.image.save(os.path.basename(temporary_file.name), File(temporary_file))
+                tweet_image.save()
+
     except Exception as e:
-        post_slack(e.__repr__())
+        print(e)
 
 
 async def get_stream():
