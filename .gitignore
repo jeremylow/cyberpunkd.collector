@@ -1,0 +1,9 @@
+docs/_build/**
+.coverage
+.tox
+htmlcov
+*.py[co]
+env.py
+
+cyberpunkd/docker.postgres.sh
+*.pid

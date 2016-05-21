@@ -1,0 +1,6 @@
+django
+-e git://github.com/bear/python-twitter@master#egg=python-twitter
+pillow
+pre-commit
+requests
+curio
