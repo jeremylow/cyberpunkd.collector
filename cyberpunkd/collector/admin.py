@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
-from collector.models import TwitterUser, Location, Tweet
+from collector import models
 
-admin.site.register(TwitterUser)
-admin.site.register(Location)
-admin.site.register(Tweet)
+admin.site.register(models.TwitterUser)
+admin.site.register(models.Location)
+admin.site.register(models.Tweet)
+admin.site.register(models.TweetImage)

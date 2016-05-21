@@ -20,8 +20,8 @@ __author__ = "Jeremy Low <jeremylow@gmail.com>"
 
 class TwitterUser(models.Model):
     username = models.CharField(max_length=16)
+    twitter_id = models.BigIntegerField(default=-1)
     face_hash = models.TextField(blank=True, null=True)
-    image = models.ImageField(null=True)
 
     def __str__(self):
         return "TwitterUser(name={0!r})".format(self.username)
@@ -46,6 +46,7 @@ class Tweet(models.Model):
     tweet_text = models.TextField()
     tweet_date = models.DateField()
     tweet_loc = models.ForeignKey(Location, null=True)
+    _json = models.TextField(blank=True)
 
     def __str__(self):
         return "Tweet(tweet_user={0!r}, tweet_text={1!r}, tweet_date={2}, tweet_loc={3!r})".format(
@@ -53,3 +54,16 @@ class Tweet(models.Model):
             self.tweet_text,
             self.tweet_date,
             self.tweet_loc.loc_name)
+
+
+class TweetImage(models.Model):
+    image = models.ImageField(upload_to="media/")
+    tweet_user = models.ForeignKey(TwitterUser)
+    tweet = models.OneToOneField(Tweet)
+    date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return "TweetImage(tweet={0}, tweet_user={1}, date={2})".format(
+            self.tweet.tweet_text,
+            self.tweet_user.username,
+            self.date)
