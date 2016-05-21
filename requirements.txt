@@ -4,3 +4,4 @@ pillow
 pre-commit
 requests
 curio
+psycopg2

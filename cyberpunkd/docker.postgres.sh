@@ -3,5 +3,5 @@ docker run --name postgresql -itd --restart always \
   --volume /srv/docker/postgresql:/var/lib/postgresql \
   --env 'DB_USER=defaultuser' --env 'DB_PASS=defaultuserpassword' \
   --env 'PG_TRUST_LOCALNET=true' \
-  --env 'DB_NAME=tweettaggerDB' \
+  --env 'DB_NAME=cyberpunkdDB' \
   sameersbn/postgresql:9.4-12
