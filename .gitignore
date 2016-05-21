@@ -6,4 +6,4 @@ htmlcov
 env.py
 
 *.pid
-
+cyberpunkd/media/*
