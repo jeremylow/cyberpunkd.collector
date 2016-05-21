@@ -3,3 +3,4 @@ django
 pillow
 pre-commit
 requests
+curio
