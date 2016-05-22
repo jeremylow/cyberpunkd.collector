@@ -21,6 +21,42 @@ First of all, clone the repo:
 
     git clone git@github.com:jeremylow/cyberpunkd.collector.git
 
+    tree
+    .
+    ├── cyberpunkd
+    │   ├── bin
+    │   │   └── start_server.sh
+    │   ├── collector
+    │   │   ├── admin.py
+    │   │   ├── apps.py
+    │   │   ├── env.py
+    │   │   ├── __init__.py
+    │   │   ├── migrations
+    │   │   │   └── [...]
+    │   │   ├── models.py
+    │   │   ├── scraper.pid
+    │   │   ├── scraper.py
+    │   │   ├── signals.py
+    │   │   ├── tests.py
+    │   │   └── views.py
+    │   ├── conf
+    │   │   ├── cyberpunkd.nginx.conf
+    │   │   └── cyberpunkd.supervisord.conf
+    │   ├── cyberpunkd
+    │   │   ├── __init__.py
+    │   │   ├── settings.py
+    │   │   ├── urls.py
+    │   │   └── wsgi.py
+    │   ├── db.sqlite3
+    │   ├── docker.postgres.sh
+    │   ├── manage.py
+    │   └── media
+    ├── LICENSE
+    ├── README
+    ├── requirements.txt
+    ├── setup.cfg
+    └── VERSION
+
 Set up a python virtual environment using your tool of choice (I'm using [pyenv](https://github.com/yyuu/pyenv) and [pyenv-virtualenv](https://github.com/yyuu/pyenv-virtualenv)). Anyway, once you've got that squared away, install the dependencies:
 
     cd cyberpunkd.collector
@@ -37,7 +73,7 @@ If you're just running this locally and don't want to deal with postgres:
     #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     # }
 
-and comment out:
+& comment out:
 
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -50,18 +86,18 @@ and comment out:
 
 Once that's done, create a superuser with:
 
-    cd cyberpunkd
-    ./manage createsuperuser
+    python cyberpunkd/manage.py migrate
+    python cyberpunkd/manage.py createsuperuser
 
 Follow the prompts. Then run the server with:
 
-    ./manage runserver
+    python cyberpunkd/manage.py runserver
 
 Go to [127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/) and login with the user that you just created.
 
 Add a Location by clicking on "Location" under "Collector". Click "Add Location", fill out at least the `loc_name` & `hashtag` fields. Save it.
 
-The scraper depends on you having credentials to access Twitter's API. Put those in a file called `collector/env.py`:
+The scraper depends on you having credentials to access Twitter's API. Put those in a file called `cyberpunkd/collector/env.py`:
 
     CONSUMER_KEY = 'www'
     CONSUMER_SECRET = 'xxx'
@@ -73,7 +109,7 @@ Leave the slack URL as is. It's just so I can see errors on my phone.
 
 Open up a new terminal and start the scraper with:
 
-    python collector/scraper.py
+    python cyberpunkd/collector/scraper.py
 
 If all went well, you should see something like the following printed to the console:
 
