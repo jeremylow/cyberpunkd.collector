@@ -5,7 +5,5 @@ htmlcov
 *.py[co]
 env.py
 
-cyberpunkd/docker.postgres.sh
 *.pid
-
-cyberpunkd/media/*.jpg
+cyberpunkd/media/*
